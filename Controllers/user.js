@@ -100,38 +100,26 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const getUserReferral = async (req, res) => {
+export const referralDetails = async (req, res) => {
   try {
-    const userId = req.userId; // Use req.userId directly
+    const userId = req.userId;
     const checkUser = await User.findById(userId);
     if (!checkUser) {
       return res.status(400).json({ message: "User not found" });
     }
+    
     const { id } = req.params;
-    const user = await User.findById(id).populate("referredTo");
+    const user = await User.findById(id).populate("referredBy referredTo");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json({ referralDetails: user.referredTo });
+    
+    const referredBy = user.referredBy ? user.referredBy.username : "No referrer";
+    const referredTo = user.referredTo.length > 0 ? user.referredTo.map(ref => ref.username) : "No referrals";
+    
+    res.status(200).json({ referralBy: referredBy, referredTo });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-export const referralByandTo = async (req, res) => {
-  try {
-    const userId = req.userId; // Use req.userId directly
-    const checkUser = await User.findById(userId);
-    if (!checkUser) {
-      return res.status(400).json({ message: "User not found" });
-    } 
-    const { id } = req.params;
-    const user = await User.findById(id).populate(["referredBy", "referredTo"]);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    res.status(200).json({ referralBy: user.referredBy ,referredTo: user.referredTo });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-}
