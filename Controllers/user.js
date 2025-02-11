@@ -58,7 +58,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const userLogin = async (req, res) => {  
+export const userLogin = async (req, res) => { 
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({ message: "Please fill in all fields" });
@@ -79,14 +79,23 @@ export const userLogin = async (req, res) => {
               expiresIn: "1d",
             }
           );
-        res.status(200).json(existingUser);
+        res.status(200).json(token);
     }
     catch{
         res.status(500).json({ message: error.message });
     }
 }
+
 export const getUsers = async (req, res) => {
   try {
+    const userId = req.userId;
+    console.log("Authenticated User ID:", userId);
+
+    const checkUser = await User.findById(userId);
+    if (!checkUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
     const users = await User.find({});
     res.status(200).json(users);
   } catch (error) {
@@ -95,15 +104,26 @@ export const getUsers = async (req, res) => {
 };
 
 export const getUserReferral = async (req, res) => {
-  const { id } = req.params;
-  console.log(id);
   try {
-    const user = await User.findById(id).populate("referredTo"); // Await populate here
+    const userId = req.userId; // Use req.userId directly
+    console.log("Authenticated User ID:", userId);
+
+    const checkUser = await User.findById(userId);
+    if (!checkUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const { id } = req.params;
+    console.log("Requested User ID:", id);
+
+    const user = await User.findById(id).populate("referredTo");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
     res.status(200).json({ referralDetails: user.referredTo });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
