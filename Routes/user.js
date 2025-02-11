@@ -1,5 +1,5 @@
 import express from 'express';
-import { createUser, getUserReferral, getUsers, userLogin } from '../Controllers/user.js';
+import { createUser, referralDetails, getUsers, userLogin } from '../Controllers/user.js';
 import { checkAuth } from '../Middlewares/Auth.js';
 const router = express.Router();
 
