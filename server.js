@@ -5,7 +5,6 @@ import UserRoutes from './Routes/user.js';
 dotenv.config();
 const app = express();  
 const PORT = process.env.PORT ;
-console.log(process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI,
     {
         dbName: "userReferral",
