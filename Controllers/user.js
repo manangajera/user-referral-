@@ -2,6 +2,7 @@ import User from "../Models/User.js";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import e from "express";
 
 export const createUser = async (req, res) => {
   const { username, email, password, referral } = req.body;
@@ -129,3 +130,18 @@ export const referralDetails = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const checkUser = await User
+    .findById(userId);  
+    if (!checkUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    res.status(200).json(checkUser);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
