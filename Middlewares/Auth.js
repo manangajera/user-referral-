@@ -22,9 +22,8 @@ export const checkAuth = (req, res, next) => {
   }
   try {
     const data = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(data);
     req.userId = data.id;
-    return next();``
+    return next();
   } catch {
     return res.sendStatus(403);
   }
