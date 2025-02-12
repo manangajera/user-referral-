@@ -24,9 +24,6 @@ export const createUser = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    // Save the new user to the database
-    await newUser.save();
-
     if (referral) {
       // Check if the referral code exists
       const referredByUser = await User.findOne({ userReferralCode: referral });
@@ -78,7 +75,14 @@ export const userLogin = async (req, res) => {
     const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-    res.status(200).json(token);
+    return res
+    .cookie("access_token", token, {
+      httpOnly: true,
+      maxAge:24*60*60*1000,
+      // secure: process.env.NODE_ENV === "production",
+    })
+    .status(200)
+    .json({ message: "Logged in successfully 😊 👌" });
   } catch {
     res.status(500).json({ message: error.message });
   }

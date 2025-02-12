@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import UserRoutes from './Routes/user.js';
+import cookieParser from 'cookie-parser';
+
 dotenv.config();
 const app = express();  
 const PORT = process.env.PORT ;
@@ -13,6 +15,7 @@ mongoose.connect(process.env.MONGO_URI,
 .then(console.log("Db connected"))
 .catch((error) => console.log("Error: ", error));
 
+app.use(cookieParser());
 app.use(express.json());
 app.use('/user', UserRoutes);
 
